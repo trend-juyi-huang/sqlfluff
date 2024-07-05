@@ -59,4 +59,4 @@ class Rule_L060(BaseRule):
             ],
         )
 
-        return LintResult(context.segment, [fix])
+        return LintResult(context.segment, [fix], description=f"Use 'COALESCE' instead of '{context.segment.raw_upper}'.")
