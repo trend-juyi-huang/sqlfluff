@@ -43,20 +43,30 @@ class Rule_L060(BaseRule):
         if context.segment.name != "function_name_identifier":
             return None
 
-        # Only care if the function is ``IFNULL`` or ``NVL``.
-        if context.segment.raw_upper not in {"IFNULL", "NVL"}:
+        # Check if the function is ``IFNULL`` or ``NVL`` and create appropriate fix.
+        if context.segment.raw_upper == "IFNULL":
+            fix = LintFix.replace(
+                context.segment,
+                [
+                    CodeSegment(
+                        raw="COALESCE",
+                        name="function_name_identifier",
+                        type="function_name_identifier",
+                    )
+                ],
+            )
+            return LintResult(anchor=context.segment, fixes=[fix], description="Use 'COALESCE' instead of 'IFNULL'.")
+        elif context.segment.raw_upper == "NVL":
+            fix = LintFix.replace(
+                context.segment,
+                [
+                    CodeSegment(
+                        raw="COALESCE",
+                        name="function_name_identifier",
+                        type="function_name_identifier",
+                    )
+                ],
+            )
+            return LintResult(anchor=context.segment, fixes=[fix], description="Use 'COALESCE' instead of 'NVL'.")
+        else:
             return None
-
-        # Create fix to replace ``IFNULL`` or ``NVL`` with ``COALESCE``.
-        fix = LintFix.replace(
-            context.segment,
-            [
-                CodeSegment(
-                    raw="COALESCE",
-                    name="function_name_identifier",
-                    type="function_name_identifier",
-                )
-            ],
-        )
-
-        return LintResult(context.segment, [fix])
